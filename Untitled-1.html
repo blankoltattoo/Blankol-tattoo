@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blankol Tattoo</title>
+
+<!-- Google Fontok - lecserélheted, de ez illik a fekete-fehér, minimál stílushoz -->
+<link rel="preconnect" href="[fonts.googleapis.com](https://fonts.googleapis.com)">
+<link href="[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap)" rel="stylesheet">
+
+<style>
+  :root{
+    --black: #0a0a0a;
+    --black-soft: #151515;
+    --white: #f2f2f2;
+    --gray: #999;
+    --gray-light: #cfcfcf;
+    --line: rgba(255,255,255,0.15);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  h1,h2,h3{
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+
+  /* Minden kép automatikusan fekete-fehér marad, akkor is, ha színeset töltesz fel */
+  img{
+    max-width: 100%;
+    display: block;
+    filter: grayscale(1) contrast(1.05);
+  }
+
+  .container{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .btn{
+    display: inline-block;
+    padding: 14px 32px;
+    border: 1px solid var(--white);
+    color: var(--white);
+    background: transparent;
+    letter-spacing: 1px;
+    font-size: 14px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .btn:hover{
+    background: var(--white);
+    color: var(--black);
+  }
+
+  /* ===== NAVIGÁCIÓ ===== */
+  header{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 18px 0;
+    background: transparent;
+    transition: background 0.4s ease, padding 0.4s ease;
+  }
+  header.scrolled{
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(6px);
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav-container{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo-link{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* IDE JÖN A NÉGYZET ALAKÚ LOGÓD - kis méretben a navigációban */
+  .logo-img{
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border: 1px solid var(--line);
+  }
+
+  .logo-text{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .nav-links{
+    display: flex;
+    gap: 36px;
+  }
+  .nav-links a{
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+    padding-bottom: 4px;
+  }
+  .nav-links a::after{
+    content:'';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0%;
+    height: 1px;
+    background: var(--white);
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover::after{ width: 100%; }
+
+  .socials{
+    display: flex;
+    gap: 16px;
+  }
+  .socials a{
+    color: var(--white);
+    opacity: 0.8;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .socials a:hover{
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+
+  .menu-toggle{
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1100;
+  }
+  .menu-toggle span{
+    width: 26px;
+    height: 2px;
+    background: var(--white);
+  }
+
+  /* ===== HERO / ELSŐ MEGJELENŐ RÉSZ ===== */
+  .hero{
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* IDE KERÜL A HÁTTÉRKÉPED - csak az images/hero-bg.jpg útvonalat cseréld le */
+  .hero-bg{
+    position: absolute;
+    inset: 0;
+    background-image: url('hatter.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* ettől lesz enyhe parallax hatás görgetéskor */
+    filter: grayscale(1) contrast(1.1) brightness(0.7);
+  }
+  @media (max-width: 768px){
+    .hero-bg{ background-attachment: scroll; } /* mobilon a fixed háttér gyakran akadozik */
+  }
+
+  .hero-overlay{
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.75) 100%);
+  }
+
+  .hero-content{
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 700px;
+    padding: 0 20px;
+  }
+
+  /* IDE KERÜL A NÉGYZET ALAKÚ LOGÓD - nagyobb méretben a nyitóképernyőn */
+  .hero-logo{
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin: 0 auto 24px;
+    border: 1px solid rgba(255,255,255,0.5);
+  }
+
+  .hero-content h1{
+    font-size: 56px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .hero-content p{
+    color: var(--gray-light);
+    font-size: 16px;
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+  }
+
+  .scroll-down{
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray-light);
+    z-index: 2;
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce{
+    0%,100%{ transform: translate(-50%, 0); }
+    50%{ transform: translate(-50%, 8px); }
+  }
+
+  /* ===== ÁLTALÁNOS SZEKCIÓ STÍLUS ===== */
+  .section{
+    padding: 110px 0;
+  }
+  .section.dark-alt{
+    background: var(--black-soft);
+  }
+  .section h2{
+    font-size: 38px;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  /* ===== RÓLAM ===== */
+  .two-col{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .two-col .text h2{ text-align: left; }
+  .two-col .text p{ color: var(--gray-light); margin-bottom: 16px; }
+  .two-col .image img{
+    width: 100%;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+  }
+
+  @media (max-width: 768px){
+    .two-col{ grid-template-columns: 1fr; }
+  }
+
+  /* ===== GALÉRIA ===== */
+  .gallery-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .gallery-item{
+    overflow: hidden;
+    aspect-ratio: 1/1;
+    border: 1px solid var(--line);
+  }
+  .gallery-item img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .gallery-item:hover img{
+    transform: scale(1.08);
+  }
+
+  /* ===== ÁRLISTA ===== */
+  .price-table{
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .price-row{
+    display: flex;
+    justify-content: space-between;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .price-row .name{ font-size: 17px; }
+  .price-row .desc{ display:block; font-size: 13px; color: var(--gray); margin-top: 4px; }
+  .price-row .price{ font-weight: 600; white-space: nowrap; padding-left: 20px; }
+  .price-note{
+    text-align: center;
+    color: var(--gray);
+    font-size: 13px;
+    margin-top: 24px;
+  }
+
+  /* ===== KAPCSOLAT ===== */
+  .contact-container{
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .contact-text h2{ text-align: left; }
+  .contact-text > p{ color: var(--gray-light); margin-bottom: 20px; }
+  .contact-list{
+    list-style: none;
+    margin-bottom: 28px;
+  }
+  .contact-list li{
+    padding: 6px 0;
+    color: var(--gray-light);
+    font-size: 15px;
+  }
+  .contact-list li::before{
+    content: "— ";
+    color: var(--gray);
+  }
+  .email-btn{ margin-bottom: 18px; display: inline-block; }
+  .contact-phone{
+    margin-top: 10px;
+    color: var(--gray-light);
+    font-size: 15px;
+  }
+  .socials-large{
+    display: flex;
+    gap: 22px;
+    margin-top: 28px;
+  }
+  .socials-large a{
+    color: var(--white);
+    opacity: 0.85;
+  }
+  .contact-image img{
+    width: 100%;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+    border: 1px solid var(--line);
+  }
+
+  @media (max-width: 768px){
+    .contact-container{ grid-template-columns: 1fr; }
+  }
+
+  /* ===== FOOTER ===== */
+  footer{
+    padding: 40px 0;
+    text-align: center;
+    border-top: 1px solid var(--line);
+    color: var(--gray);
+    font-size: 13px;
+  }
+  footer img{
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    margin: 0 auto 12px;
+  }
+
+  /* ===== GÖRGETÉSES BEÚSZÓ ANIMÁCIÓ ===== */
+  .reveal{
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible{
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== MOBIL MENÜ ===== */
+  @media (max-width: 900px){
+    .nav-links{
+      position: fixed;
+      top: 0; right: -100%;
+      width: 70%;
+      height: 100vh;
+      background: var(--black);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      transition: right 0.4s ease;
+    }
+    .nav-links.open{ right: 0; }
+    .socials{ display: none; }
+    .menu-toggle{ display: flex; }
+    .hero-content h1{ font-size: 38px; }
+    .section h2{ font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===== NAVIGÁCIÓ ===== -->
+  <header id="navbar">
+    <div class="nav-container">
+      <a href="#hero" class="logo-link">
+        <!-- CSERÉLD LE: a négyzet alakú logód fájlnevére -->
+        <img src="IMG_0261.png" alt="Langolf Tattoo logó" class="logo-img">
+        <span class="logo-text">Blankol Tattoo</span>
+      </a>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="#rolam" class="nav-link">Rólam</a>
+        <a href="#galeria" class="nav-link">Galéria</a>
+        <a href="#arlista" class="nav-link">Árlista</a>
+        <a href="#kapcsolat" class="nav-link">Kapcsolat</a>
+      </nav>
+
+      <div class="socials">
+        <!-- CSERÉLD LE a href-eket a saját profiljaidra -->
+        <a href="https://www.instagram.com/blankol_tattoo" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 7.001a4.999 4.999 0 100 9.998 4.999 4.999 0 000-9.998zm0 8.25a3.25 3.25 0 110-6.5 3.25 3.25 0 010 6.5zm5.406-9.845a1.17 1.17 0 100 2.34 1.17 1.17 0 000-2.34z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/profile.php?id=61580311691101" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M22 12.06C22 6.505 17.523 2 12 2S2 6.505 2 12.06c0 5.02 3.657 9.184 8.438 9.94v-7.03H7.898v-2.91h2.54V9.845c0-2.507 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562v1.878h2.773l-.443 2.91h-2.33V22c4.78-.756 8.437-4.92 8.437-9.94z"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@blankol_tattoo" target="_blank" rel="noopener" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M16.5 3c.3 2.1 1.7 3.8 3.7 4.2v2.9c-1.3 0-2.6-.4-3.7-1.1v6.4c0 3.1-2.5 5.6-5.6 5.6S5.3 18.5 5.3 15.4c0-3 2.3-5.4 5.3-5.6v3c-1.3.2-2.3 1.3-2.3 2.6 0 1.5 1.2 2.7 2.7 2.7s2.7-1.2 2.7-2.7V3h3.5z"/></svg>
+        </a>
+      </div>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Menü">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== HERO / ELSŐ MEGJELENŐ TERÜLET ===== -->
+  <section id="hero" class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content reveal">
+      <!-- CSERÉLD LE: négyzet alakú logó a nyitóképernyőn -->
+      <img src="IMG_0261.png" alt="Blankol Tattoo logó" class="hero-logo">
+      <h1>Blankol Tattoo</h1>
+      <p>Egyedi tervezésű tetoválások, fekete-fehér vonalvezetéssel.</p>
+      <a href="#kapcsolat" class="btn">Időpontfoglalás</a>
+    </div>
+    <div class="scroll-down">↓ Görgess lejjebb</div>
+  </section>
+
+  <!-- ===== RÓLAM ===== -->
+  <section id="rolam" class="section">
+    <div class="container two-col">
+      <div class="text reveal">
+        <h2>Rólam</h2>
+        <p>Az elmúlt években a tetoválás vált a hivatásommá ha még engem is meglepett, bár voltak erre utaló jelek már gyermek koromtól kezdve. Azóta maximalizmusommal és szakmai alázatommal végzem a munkám.</p>
+        <p>Jelenleg festői képzésen veszek részt a térlátásom és árnyék játékom fejlesztésére, ennek ellenére több mint 10 éve az életem része az alkotás.</p>
+      </div>
+      <div class="image reveal">
+        <!-- CSERÉLD LE: saját fotód -->
+        <img src="IMG_2693.jpeg" alt="Rólam fotó">
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== GALÉRIA ===== -->
+  <section id="galeria" class="section dark-alt">
+    <div class="container">
+      <h2 class="reveal">Galéria</h2>
+      <div class="gallery-grid">
+        <!-- CSERÉLD LE / BŐVÍTSD: minden div egy kép, csak másold a blokkot -->
+        <div class="gallery-item reveal"><img src="images/galeria-1.jpg" alt="Munka 1"></div>
+        <div class="gallery-item reveal"><img src="images/galeria-2.jpg" alt="Munka 2"></div>
+        <div class="gallery-item reveal"><img src="images/galeria-3.jpg" alt="Munka 3"></div>
+        <div class="gallery-item reveal"><img src="images/galeria-4.jpg" alt="Munka 4"></div>
+        <div class="gallery-item reveal"><img src="images/galeria-5.jpg" alt="Munka 5"></div>
+        <div class="gallery-item reveal"><img src="images/galeria-6.jpg" alt="Munka 6"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ÁRLISTA ===== -->
+  <section id="arlista" class="section">
+    <div class="container">
+      <h2 class="reveal">Árlista</h2>
+      <div class="price-table reveal">
+        <div class="price-row">
+          <span class="name">Konzultáció<span class="desc">Elképzelés megbeszélése, tervezés</span></span>
+          <span class="price">Ingyenes</span>
+        </div>
+        <div class="price-row">
+          <span class="name">Kis tetoválás<span class="desc">max. 5 cm</span></span>
+          <span class="price">15 000 Ft-tól</span>
+        </div>
+        <div class="price-row">
+          <span class="name">Közepes tetoválás<span class="desc">5–15 cm</span></span>
+          <span class="price">30 000 Ft-tól</span>
+        </div>
+        <div class="price-row">
+          <span class="name">Nagy tetoválás / félkar<span class="desc">több alkalmas munka</span></span>
+          <span class="price">Egyedi árajánlat</span>
+        </div>
+        <div class="price-row">
+          <span class="name">Fedő tetoválás (cover-up)<span class="desc">meglévő tetoválás eltakarása</span></span>
+          <span class="price">Egyedi árajánlat</span>
+        </div>
+        <div class="price-row">
+          <span class="name">Óradíj</span>
+          <span class="price">20 000 Ft / óra</span>
+        </div>
+      </div>
+      <p class="price-note">Az árak tájékoztató jellegűek, a végleges ár a konzultáció során, a méret és a részletesség alapján kerül meghatározásra.</p>
+    </div>
+  </section>
+
+  <!-- ===== KAPCSOLAT ===== -->
+  <section id="kapcsolat" class="section dark-alt">
+    <div class="container contact-container">
+      <div class="contact-text reveal">
+        <h2>Kapcsolat & Időpontfoglalás</h2>
+        <p>Időpontot kizárólag e-mailben tudok rögzíteni – így tudom rendben tartani a naptáramat. Telefonon szívesen egyeztetek részleteket, de a foglalás mindig egy e-maillel indul.</p>
+        <p>Az e-mailben írd le nekem:</p>
+        <ul class="contact-list">
+          <li>Neved és telefonszámod</li>
+          <li>Az elképzelésed rövid leírása (motívum, stílus)</li>
+          <li>Hozzávetőleges méret</li>
+          <li>Testrész, ahova szánod a tetoválást</li>
+          <li>Preferált időpontok / napszakok</li>
+          <li>Ha van, csatolj referenciaképeket</li>
+        </ul>
+
+        <!-- CSERÉLD LE: a saját email címedre -->
+        <a class="btn email-btn" href="mailto:info@langolftattoo.hu?subject=Id%C5%91pontfoglal%C3%A1s%20-%20Langolf%20Tattoo&body=N%C3%A9v%3A%0ATelefonsz%C3%A1m%3A%0AElk%C3%A9pzel%C3%A9s%20le%C3%ADr%C3%A1sa%3A%0AM%C3%A9ret%20(kb.)%3A%0ATestr%C3%A9sz%3A%0APreferalt%20id%C5%91pontok%3A%0A%0A(Ha%20van%2C%20csatolj%20referenciak%C3%A9pet!)">
+          ✉ info@langolftattoo.hu
+        </a>
+
+        <p class="contact-phone"><!-- CSERÉLD LE a telefonszámodra -->Telefon: +36 30 000 0000 (előzetes egyeztetéshez)</p>
+
+        <div class="socials-large">
+          <a href="[instagram.com](https://instagram.com/te_felhasznalonev)" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 7.001a4.999 4.999 0 100 9.998 4.999 4.999 0 000-9.998zm0 8.25a3.25 3.25 0 110-6.5 3.25 3.25 0 010 6.5zm5.406-9.845a1.17 1.17 0 100 2.34 1.17 1.17 0 000-2.34z"/></svg>
+          </a>
+          <a href="[facebook.com](https://facebook.com/oldalad)" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M22 12.06C22 6.505 17.523 2 12 2S2 6.505 2 12.06c0 5.02 3.657 9.184 8.438 9.94v-7.03H7.898v-2.91h2.54V9.845c0-2.507 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562v1.878h2.773l-.443 2.91h-2.33V22c4.78-.756 8.437-4.92 8.437-9.94z"/></svg>
+          </a>
+          <a href="[tiktok.com](https://www.tiktok.com/@te_felhasznalonev)" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M16.5 3c.3 2.1 1.7 3.8 3.7 4.2v2.9c-1.3 0-2.6-.4-3.7-1.1v6.4c0 3.1-2.5 5.6-5.6 5.6S5.3 18.5 5.3 15.4c0-3 2.3-5.4 5.3-5.6v3c-1.3.2-2.3 1.3-2.3 2.6 0 1.5 1.2 2.7 2.7 2.7s2.7-1.2 2.7-2.7V3h3.5z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-image reveal">
+        <!-- CSERÉLD LE: stúdió / munkahelyi fotó -->
+        <img src="images/studio.jpg" alt="Stúdió">
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <img src="images/logo.png" alt="Langolf Tattoo logó">
+    <p>&copy; 2026 Langolf Tattoo. Minden jog fenntartva.</p>
+  </footer>
+
+<script>
+  // Navigáció háttere görgetéskor
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+
+  // Mobil menü nyitása/zárása
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.getElementById('navLinks');
+  menuToggle.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+  });
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => navLinks.classList.remove('open'));
+  });
+
+  // Görgetésre beúszó animáció
+  const revealElements = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  revealElements.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
+
